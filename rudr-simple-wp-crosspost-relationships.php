@@ -5,7 +5,7 @@
  * Author URI: https://rudrastyh.com
  * Description: Allows to crosspost post IDs and term IDs in custom fields
  * Plugin URI: https://rudrastyh.com/support/crossposting-relationships-fields
- * Version: 1.0
+ * Version: 1.1
  */
 
 class Rudr_SWC_Relationships {
@@ -41,7 +41,16 @@ class Rudr_SWC_Relationships {
 		$blog_id = Rudr_Simple_WP_Crosspost::get_blog_id( $blog );
 
 		$meta_value = maybe_unserialize( $meta_value );
-		$ids = is_array( $meta_value ) ? $meta_value : array( $meta_value );
+		$is_comma_separated = false;
+		// let's make it array anyway for easier processing
+		if( is_array( $meta_value ) ) {
+			$ids = $meta_value;
+		} elseif( false !== strpos( $meta_value, ',' ) ) {
+			$is_comma_separated = true;
+			$ids = array_map( 'trim', explode( ',', $meta_value ) );
+		} else {
+			$ids = array( $meta_value );
+		}
 
 		$crossposted_ids = array();
 		foreach( $ids as $id ) {
@@ -58,7 +67,14 @@ class Rudr_SWC_Relationships {
 				}
 			}
 		}
-		return is_array( $meta_value ) ? $crossposted_ids : ( $crossposted_ids ? reset( $crossposted_ids ) : 0 );
+
+		if( is_array( $meta_value ) ) {
+			return $crossposted_ids;
+		} elseif( $crossposted_ids ) {
+			return $is_comma_separated ? join( ',', $crossposted_ids ) : reset( $crossposted_ids );
+		} else {
+			return 0;
+		}
 
 	}
 
@@ -69,7 +85,17 @@ class Rudr_SWC_Relationships {
 
 		// get an array of term slugs
 		$slugs = array();
-		$term_ids = is_array( $meta_value ) ? $meta_value : array( $meta_value );
+		$meta_value = maybe_unserialize( $meta_value );
+		$is_comma_separated = false;
+		// let's make it array anyway for easier processing
+		if( is_array( $meta_value ) ) {
+			$term_ids = $meta_value;
+		} elseif( false !== strpos( $meta_value, ',' ) ) {
+			$is_comma_separated = true;
+			$term_ids = array_map( 'trim', explode( ',', $meta_value ) );
+		} else {
+			$term_ids = array( $meta_value );
+		}
 
 		foreach( $term_ids as $term_id ) {
 			$term = get_term( $term_id );
@@ -120,7 +146,14 @@ class Rudr_SWC_Relationships {
 				}
 			}
 		}
-		return is_array( $meta_value ) ? $crossposted_term_ids : ( $crossposted_term_ids ? reset( $crossposted_term_ids ) : 0 );
+
+		if( is_array( $meta_value ) ) {
+			return $crossposted_term_ids;
+		} elseif( $crossposted_term_ids ) {
+			return $is_comma_separated ? join( ',', $crossposted_term_ids ) : reset( $crossposted_term_ids );
+		} else {
+			return 0;
+		}
 
 	}
 
