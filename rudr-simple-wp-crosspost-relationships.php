@@ -5,7 +5,7 @@
  * Author URI: https://rudrastyh.com
  * Description: Allows to crosspost post IDs and term IDs in custom fields
  * Plugin URI: https://rudrastyh.com/support/crossposting-relationships-fields
- * Version: 1.1
+ * Version: 1.2
  */
 
 class Rudr_SWC_Relationships {
@@ -24,11 +24,21 @@ class Rudr_SWC_Relationships {
 		}
 
 		// not an attachment custom field
-		if( in_array( $meta_key, apply_filters( 'rudr_crosspost_post_relationship_meta_keys', array() ) ) ) {
+		$post_relationship_meta_keys = apply_filters( 'rudr_crosspost_post_relationship_meta_keys', array() );
+		if(
+			in_array( $meta_key, $post_relationship_meta_keys )
+			// Pods support
+			|| 0 === strpos( $meta_key, '_pods_' ) && in_array( str_replace( '_pods_', '', $meta_key ), $post_relationship_meta_keys )
+		) {
 			return $this->process_post_relationships( $meta_value, $blog );
 		}
 
-		if( in_array( $meta_key, apply_filters( 'rudr_crosspost_term_relationship_meta_keys', array() ) ) ) {
+		$term_relationship_meta_keys = apply_filters( 'rudr_crosspost_term_relationship_meta_keys', array() );
+		if(
+			in_array( $meta_key, $term_relationship_meta_keys )
+			// Pods support
+			|| 0 === strpos( $meta_key, '_pods_' ) && in_array( str_replace( '_pods_', '', $meta_key ), $term_relationship_meta_keys )
+		) {
 			return $this->process_term_relationships( $meta_value, $blog );
 		}
 
