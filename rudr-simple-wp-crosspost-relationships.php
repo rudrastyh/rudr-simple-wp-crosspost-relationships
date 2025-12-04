@@ -5,7 +5,7 @@
  * Author URI: https://rudrastyh.com
  * Description: Allows to crosspost post IDs and term IDs in custom fields
  * Plugin URI: https://rudrastyh.com/support/crossposting-relationships-fields
- * Version: 1.2
+ * Version: 1.3
  */
 
 class Rudr_SWC_Relationships {
@@ -69,11 +69,11 @@ class Rudr_SWC_Relationships {
 				$product = wc_get_product( $id );
 				// no need to check connection type, this method does that
 				if( $product && ( $new_id = Rudr_Simple_Woo_Crosspost::is_crossposted_product( $product, $blog ) ) ) {
-					$crossposted_ids[] = $new_id;
+					$crossposted_ids[] = (int) $new_id;
 				}
 			} else {
 				if( $new_id = Rudr_Simple_WP_Crosspost::is_crossposted( $id, $blog_id ) ) {
-					$crossposted_ids[] = $new_id;
+					$crossposted_ids[] = (int) $new_id;
 				}
 			}
 		}
@@ -152,7 +152,7 @@ class Rudr_SWC_Relationships {
 					if( empty( $term[ 'id' ] ) ) {
 						continue;
 					}
-					$crossposted_term_ids[] = $term[ 'id' ];
+					$crossposted_term_ids[] = (int) $term[ 'id' ];
 				}
 			}
 		}
